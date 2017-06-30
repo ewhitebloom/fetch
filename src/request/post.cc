@@ -1,6 +1,9 @@
 #ifndef POST
 #define POST
 
+#include "../encode/encode.cc"
+#include "../encode/params.cc"
+
 namespace post {
   string fetchResponse;
   string headers;
@@ -23,38 +26,41 @@ namespace post {
     return nitems * size;
   }
 
-  Response post(string url) {
-    CURL* curl;
+  Response post(string url, vector< Param<string> > params) {
+    CURL *curl;
     CURLcode res;
+
     curl_global_init(CURL_GLOBAL_ALL);
+
     curl = curl_easy_init();
-
-    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &writeCallback);
-    curl_easy_setopt(curl, CURLOPT_HEADER, 1L);
-    curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, header_callback);
-
-    res = curl_easy_perform(curl);
-
-    curl_easy_cleanup(curl);
-    curl_global_cleanup();
 
     Response response;
     response.url = url;
     response.body = fetchResponse;
 
-    if(res != CURLE_OK) {
-      throw "Something went wrong.";
-    } else {
-      long response_code;
-      curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
+    if (curl) {
+      curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+      curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "name=daniel&project=curl");
 
-      response.status = response_code;
-      response.headers = parseHeaders(headers);
+      res = curl_easy_perform(curl);
+
+      if (res != CURLE_OK) {
+        fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+        throw "Something went wrong";
+      } else {
+        long response_code;
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
+
+        response.status = response_code;
+        response.headers = parseHeaders(headers);
+      }
+
+      curl_easy_cleanup(curl);
     }
+    curl_global_cleanup();
 
     return response;
-  }
+    }
 }
 
 #endif

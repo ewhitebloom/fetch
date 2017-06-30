@@ -50,7 +50,7 @@ namespace get {
     response.url = url;
     response.body = fetchResponse;
 
-    if(res != CURLE_OK) {
+    if (res != CURLE_OK) {
       throw "Something went wrong.";
     } else {
       long response_code;
@@ -62,7 +62,6 @@ namespace get {
 
     return response;
   }
-
 }
 
 #endif
