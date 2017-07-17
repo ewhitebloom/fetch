@@ -1,5 +1,5 @@
 main: src/main.cc
-	 g++ src/main.cc -o fetch -lcurl -I /usr/local/Cellar/boost/1.64.0_1/include
+	 g++ src/main.cc -o fetch -std=c++11 -lcurl -I /usr/local/Cellar/boost/1.64.0_1/include
 # fetch: header.o response.o fetch.o main.o
 # 	g++ header.o response.o fetch.o main.o -o fetch -lcurl
 
