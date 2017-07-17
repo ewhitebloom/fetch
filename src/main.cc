@@ -22,7 +22,8 @@ int main () {
 
   Response r = fetch("https://www.google.com");
 
-  cout << r.body << endl;
-
+  if (r.ok()) {
+    cout << r.body << endl;
+  }
   return 0;
 }

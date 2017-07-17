@@ -10,8 +10,10 @@ using namespace std;
 class Response {
   public:
     string body;
-    long status;
-    bool ok = this -> status == 200;
+    int status;
+    bool ok () {
+      return this -> status == 200;
+    }
     string url;
     string statusText;
     vector<Header> headers;

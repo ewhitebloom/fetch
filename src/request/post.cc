@@ -26,7 +26,7 @@ namespace post {
     return nitems * size;
   }
 
-  Response post(string url, vector< Param<string> > params) {
+  Response post(string& url, vector< Param<string> >& params) {
     CURL *curl;
     CURLcode res;
 
@@ -40,15 +40,14 @@ namespace post {
 
     if (curl) {
       curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-      curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "name=daniel&project=curl");
+      curl_easy_setopt(curl, CURLOPT_POSTFIELDS, encode(params).c_str());
 
       res = curl_easy_perform(curl);
 
       if (res != CURLE_OK) {
-        fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-        throw "Something went wrong";
+        raiseCurlCode(res);
       } else {
-        long response_code;
+        int response_code;
         curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
 
         response.status = response_code;

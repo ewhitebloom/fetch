@@ -2,6 +2,7 @@
 #define GET
 
 #include <curl/curl.h>
+#include "../exception/exceptions.cc"
 #include "../header.cc"
 #include <iostream>
 #include "../response.cc"
@@ -30,7 +31,7 @@ namespace get {
     return nitems * size;
   }
 
-  Response get(string url) {
+  Response get(string& url) {
     CURL* curl;
     CURLcode res;
     curl_global_init(CURL_GLOBAL_ALL);
@@ -51,9 +52,9 @@ namespace get {
     response.body = fetchResponse;
 
     if (res != CURLE_OK) {
-      throw "Something went wrong.";
+      raiseCurlCode(res);
     } else {
-      long response_code;
+      int response_code;
       curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
 
       response.status = response_code;
